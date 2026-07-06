@@ -976,18 +976,30 @@ typeRole(0);
   }, { threshold: 0.2 });
   pipelineObserver.observe(pipelineSection);
 
-  // ---- Contact form (static simulate) ----
-  document.getElementById('contact-form').addEventListener('submit', function(e){
-    e.preventDefault();
-    const out = document.getElementById('contact-output');
-    const name = document.getElementById('f-name').value || 'anonymous';
-    out.textContent = '> sending...';
-    setTimeout(() => {
-      out.innerHTML = '$ status: <span style="color:var(--cyan)">200 OK</span> — thanks ' + name + ', message received. I will reply within 24h.';
-      this.reset();
-    }, 700);
-  });
-</script>
 
+emailjs.init("o9wAQhrnKsAwVgcBm");
+
+document.getElementById("contact-form").addEventListener("submit", function(event) {
+    event.preventDefault();
+
+    const output = document.getElementById("contact-output");
+    output.innerHTML = "> sending...";
+
+    emailjs.send("service_sy6d8it", "template_z77iq1b", {
+        name: document.getElementById("f-name").value,
+        email: document.getElementById("f-email").value,
+        message: document.getElementById("f-msg").value
+    })
+    .then(function() {
+        output.innerHTML = '$ status: <span style="color:var(--cyan)">200 OK</span> — Message sent successfully!';
+        document.getElementById("contact-form").reset();
+    })
+    .catch(function(error) {
+        output.innerHTML = '$ status: <span style="color:red">500 ERROR</span> — Failed to send message.';
+        console.log(error);
+    });
+});
+</script>
+<script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
 </body>
 </html>
